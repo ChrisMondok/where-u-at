@@ -1,48 +1,39 @@
-const restify = require('restify')
-const ws = require('ws')
+const express = require('express')
 const url = require('url')
 const shortid = require('shortid')
 const fs = require('fs')
 
-const server = restify.createServer({
-	name: 'Get Together',
-	version: '1.0.0'
+var app = express()
+
+require('express-ws')(app)
+
+app.get('/', function(req, res, next) {
+	return res.redirect(301, '/client/index.html')
 })
 
-const wss = new ws.Server({server: server.server})
+app.get('/es6-promise.min.js', express.static('./node_modules/es6-promise/dist'))
 
-server.get('/', function(req, res, next) {
-	return res.redirect('/client/index.html', next)
-})
+app.get('/less.min.js', express.static('./node_modules/less/dist'))
 
-server.get('/es6-promise.min.js', restify.serveStatic({
-	directory: './node_modules/es6-promise/dist'
-}))
-
-server.get('/less.min.js', restify.serveStatic({
-	directory: './node_modules/less/dist'
-}))
-
-server.get(/\/client\/?.*/, restify.serveStatic({
-	directory: './public'
-}))
+app.get(/\/client\/?.*/, express.static('./public'))
 
 fs.readFile('google-maps-api-key', function(error, key) {
 	key = key.toString()
 
-	server.get('/google-maps-api.js', function(req, res, next) {
+	app.get('/google-maps-api.js', function(req, res) {
 		var url = '//maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=mapsLoaded&libraries=places'
-		return res.redirect(url.replace('YOUR_API_KEY', key), next)
+		return res.redirect(302, encodeURI(url.replace('YOUR_API_KEY', key)))
 	})
 })
 
-server.listen(5555, function() {
+app.listen(5555, function() {
 	console.log("We're live!")
 })
 
+
 const connections = []
 
-wss.on('connection', function(ws) {
+app.ws('/', function(ws, req) {
 	var name
 
 	var id = shortid.generate()

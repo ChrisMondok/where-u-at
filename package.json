@@ -5,8 +5,9 @@
   "author": "",
   "dependencies": {
     "es6-promise": "^3.2.1",
+    "express": "^4.13.4",
+    "express-ws": "^2.0.0-rc.1",
     "less": "^2.7.1",
-    "restify": "^4.0.4",
     "shortid": "^2.2.6",
     "ws": "^1.1.0"
   }
