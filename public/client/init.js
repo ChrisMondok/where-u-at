@@ -81,7 +81,8 @@ addEventListener('load', function() {
 		var map = new google.maps.Map(node, {
 			zoom: 8,
 			fullscreenControl: false,
-			center: { lat: position.coords.latitude, lng: position.coords.longitude }
+			center: { lat: position.coords.latitude, lng: position.coords.longitude },
+			clickableIcons: false
 		})
 
 		return new Promise(function(resolve, reject) {
