@@ -45,7 +45,7 @@ addEventListener('load', function() {
 			startWatchingPosition()
 			comms.addListener(readMessages)
 		}, function(e) {
-			console.error(e)
+			alert(e)
 		})
 	}
 
