@@ -15,7 +15,7 @@ server.get('/', function(req, res, next) {
 })
 
 server.get('/es6-promise.min.js', restify.serveStatic({
-	directory: './node_modules/es6-promise/dist/es6-promise.min.js'
+	directory: './node_modules/es6-promise/dist'
 }))
 
 server.get('/less.min.js', restify.serveStatic({
