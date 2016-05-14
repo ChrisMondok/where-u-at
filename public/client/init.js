@@ -1,6 +1,6 @@
 var resolveMap
 
-var mapsPromise = new Promise(function(r, reject) {
+var googleMapsLoadedPromise = new Promise(function(r, reject) {
 	resolveMap = r
 })
 
@@ -9,62 +9,112 @@ function mapsLoaded() {
 }
 
 addEventListener('load', function() {
-	var form = document.querySelector('#setup-form-container form')
+	var comms = new Comms()
+	var myLocation = null
+	var friendsList = null
+
+	setUpForm()
 
 
-	var checkbox = document.querySelector('#setup-form-container input[type=checkbox]')
-
-	checkbox.indeterminate = true
-
-	var locationPromise = new Promise(function(resolve, reject) {
-		navigator.geolocation.getCurrentPosition(function(pos) {
-			resolve(pos)
-			checkbox.indeterminate = false
-			checkbox.checked = true
-			checkbox.nextSibling.textContent = 'Found you'
-		}, function(e) {
-			alert("Got error "+e)
-		})
-	})
-
-	var namePromise = new Promise(function(resolve, reject) {
-		form.style.display = ''
+	function setUpForm() {
+		var form = document.querySelector('#setup-form-container form')
+		
 		form.addEventListener('submit', function(e) {
 			e.preventDefault()
 			form.querySelector('button').disabled = true
-			resolve(form.elements.name.value)
-		})
-	})
-
-	var connectionPromise = Promise.all([namePromise, locationPromise]).then(function(promises) {
-		var coords = promises[1].coords
-		var url = 'ws://'+location.host+'?'+toQueryString({
-			name: promises[0],
-			latitude: coords.latitude,
-			longitude: coords.longitude
+			begin(form.elements.name.value)
 		})
 
-		var ws = new WebSocket(url)
+		form.querySelector('button').disabled = false
+	}
+
+	function begin(name) {
+		getPosition().then(function(position) {
+			 console.log("Got position")
+			 return Promise.all([
+				comms.connect(name, position),
+				googleMapsLoadedPromise.then(function() {
+					return makeMap(document.querySelector('main'), position)
+				})
+			]).then(function(stuff) {
+				createWidgets(stuff[0], stuff[1], position)
+				return stuff[0]
+			})
+		}).then(function() {
+			startWatchingPosition()
+			comms.addListener(readMessages)
+		}, function(e) {
+			console.error(e)
+		})
+	}
+
+	function getPosition() {
+		console.log("Called get position")
+		var checkbox = document.querySelector('#setup-form-container input[type=checkbox]')
+
+		checkbox.indeterminate = true
 
 		return new Promise(function(resolve, reject) {
-			ws.addEventListener('open', function() {
-				resolve(ws)
+			navigator.geolocation.getCurrentPosition(function(pos) {
+				resolve(pos)
+				checkbox.indeterminate = false
+				checkbox.checked = true
+				checkbox.nextSibling.textContent = 'Found you'
+			}, function(e) {
+				reject(e)
 			})
-
-			ws.addEventListener('error', function() {
-				reject(ws)
-			})
-
 		})
-	})
+	}
 
-	Promise.all([mapsPromise, connectionPromise, locationPromise]).then(function(promises) {
+	function makeMap(parent, position) {
+		var node = document.createElement('div')
+		parent.appendChild(node)
+
+		node.style.position = 'absolute'
+
+		;['left', 'right', 'top', 'bottom'].forEach(function(side) {
+			node.style[side] = '0'
+		}, this)
+
+		var map = new google.maps.Map(node, {
+			zoom: 8,
+			fullscreenControl: false,
+			center: { lat: position.coords.latitude, lng: position.coords.longitude }
+		})
+
 		return new Promise(function(resolve, reject) {
-			new MapView(document.querySelector('main'), promises[1], promises[2], resolve)
+			google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+				openScrim()
+				resolve(map)
+			})
 		})
-	}).then(openScrim, function(e) {
-		alert("Got error "+e)
-	})
+	}
+
+	function createWidgets(connection, map, position) {
+		myLocation = new MyLocation(map, position)
+		friendsList = new FriendsList(map)
+	}
+
+	function startWatchingPosition() {
+		navigator.geolocation.watchPosition(function(position) {
+			myLocation.position = position
+			try {
+				comms.send({
+					event: 'location-updated',
+					position: position
+				})
+			} catch (e) {
+				console.error(e)
+			}
+		})
+	}
+
+	function readMessages() {
+		while(comms.peek()) {
+			var message = comms.read()
+			friendsList.update(message)
+		}
+	}
 
 	function openScrim() {
 		var scrim = document.querySelector("#scrim")

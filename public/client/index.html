@@ -10,7 +10,8 @@
 
 		<script src="init.js"> </script>
 		<script src="controls.js"> </script>
-		<script src="MapView.js"> </script>
+		<script src="Comms.js"> </script>
+		<script src="MyLocation.js"> </script>
 		<script src="Friend.js"> </script>
 		<script src="FriendsList.js"> </script>
 		<script src="Search.js"> </script>
@@ -20,17 +21,17 @@
 		<main> </main>
 		<div id="scrim"> </div>
 		<div id="setup-form-container">
-			<form style="display: none">
+			<form>
 				<header> Who are you? </header>
 
 				<input required name="name" />
 
 				<label>
 					<input name="location" type="checkbox" disabled>
-					Getting Location
+					Get location
 				</label>
 
-				<button> Enter </button>
+				<button disabled> Enter </button>
 			</form>
 		</div>
 	</body>

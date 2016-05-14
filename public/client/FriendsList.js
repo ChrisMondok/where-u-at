@@ -6,19 +6,21 @@ function FriendsList(map) {
 
 FriendsList.prototype.update = function(message) {
 	var friend = this.friends.find({id: message.id})
-	if(friend)
-		friend.update(message)
-	else
-		this.addFriend(new Friend(this.map, message))
+	switch(message.event) {
+		case 'location-updated':
+			if(friend) friend.update(message)
+			else this.addFriend(new Friend(this.map, message))
+			break;
+		case 'left':
+			if(friend) this.removeFriend(friend)
+			break
+	}
 }
 
-FriendsList.prototype.remove = function(message) {
-	var friend = this.friends.find({id: message.id})
-	if(friend) {
-		this.list.removeChild(this.list.querySelector('[data-friend-id='+message.id+']'))
-		friend.destroy() //harsh
-		this.friends.remove(friend)
-	}
+FriendsList.prototype.removeFriend = function(friend) {
+	this.list.removeChild(this.list.querySelector('[data-friend-id='+friend.id+']'))
+	friend.destroy() //harsh
+	this.friends.remove(friend)
 }
 
 FriendsList.prototype.addFriend = function(friend) {

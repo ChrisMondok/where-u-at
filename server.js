@@ -39,7 +39,7 @@ wss.on('connection', function(ws) {
 			console.log(name+" left")
 			connections.splice(connections.indexOf(ws), 1)
 			sendToOthers({
-				event: "leave",
+				event: "left",
 				id: id
 			})
 		})
@@ -50,22 +50,16 @@ wss.on('connection', function(ws) {
 	}
 
 	ws.on('message', function(message) {
-		var coords
+		var payload = {}
 		try {
-			coords = JSON.parse(message)
+			payload = JSON.parse(message)
+			payload.id = id
+			payload.name = name
+			sendToOthers(payload)
 		} catch (e) {
 			console.error(e)
 			ws.close()
 		}
-
-		var payload = {
-			event: "update",
-			coords: coords,
-			id: id,
-			name: name
-		}
-
-		sendToOthers(payload)
 	})
 
 	function sendToOthers(message) {

@@ -41,7 +41,7 @@ Object.defineProperty(Friend.prototype, 'name', {
 Friend.prototype.update = function(info) {
 	this.name = info.name
 	this.marker.setPosition({
-		lat: info.coords.latitude,
-		lng: info.coords.longitude
+		lat: info.position.coords.latitude,
+		lng: info.position.coords.longitude
 	})
 }
