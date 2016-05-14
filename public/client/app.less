@@ -1,0 +1,45 @@
+@import "style.less";
+@import "setup.less";
+@import "friends-list.less";
+
+.map-control-container {
+	margin: 10px;
+
+	input {
+		width: 300px;
+		border-radius: 8px;
+		&:focus {
+			outline: none;
+		}
+	}
+}
+
+button.icon-button {
+	background-color: transparent;
+	border: 2px solid transparent;
+	margin: -2px;
+	padding: 0;
+
+	&.circle {
+		border-radius: 50%;
+	}
+
+	img {
+		display: block;
+	}
+
+	&:focus {
+		outline: none;
+		border-color: #55F;
+	}
+}
+
+input[type=search] {
+	background-image: url(icons/Search-24.png);
+	background-repeat: no-repeat;
+	background-position: right center;
+	padding-right: 24px;
+	border: none;
+	padding: 1ch;
+	border-radius: 4px;
+}
