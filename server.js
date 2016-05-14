@@ -57,7 +57,8 @@ wss.on('connection', function(ws) {
 			connections.splice(connections.indexOf(ws), 1)
 			sendToOthers({
 				event: "left",
-				id: id
+				id: id,
+				name: name
 			})
 		})
 	}

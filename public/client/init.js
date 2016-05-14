@@ -17,7 +17,6 @@ addEventListener('load', function() {
 
 	setUpForm()
 
-
 	function setUpForm() {
 		var form = document.querySelector('#setup-form-container form')
 		
@@ -31,6 +30,7 @@ addEventListener('load', function() {
 	}
 
 	function begin(name) {
+		Notification.requestPermission()
 		getPosition().then(function(position) {
 			 return Promise.all([
 				comms.connect(name, position),
@@ -94,7 +94,7 @@ addEventListener('load', function() {
 	function createWidgets(connection, map, position) {
 		myLocation = new MyLocation(map, position)
 		friendsList = new FriendsList(map)
-		search = new Search(map)
+		search = new Search(map, comms)
 	}
 
 	function startWatchingPosition() {
@@ -115,6 +115,7 @@ addEventListener('load', function() {
 		while(comms.peek()) {
 			var message = comms.read()
 			friendsList.update(message)
+			search.update(message)
 		}
 	}
 
