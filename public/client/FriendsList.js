@@ -21,6 +21,8 @@ FriendsList.prototype.removeFriend = function(friend) {
 	this.list.removeChild(this.list.querySelector('[data-friend-id='+friend.id+']'))
 	friend.destroy() //harsh
 	this.friends.remove(friend)
+
+	new Toast(friend.name+' left')
 }
 
 FriendsList.prototype.addFriend = function(friend) {
@@ -31,6 +33,8 @@ FriendsList.prototype.addFriend = function(friend) {
 	li.textContent = friend.name
 	this.list.appendChild(li)
 	li.addEventListener('click', friend.showWindow.bind(friend))
+
+	new Toast(friend.name+' joined')
 }
 
 FriendsList.prototype.initControls = function() {

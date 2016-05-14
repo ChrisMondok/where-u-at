@@ -27,6 +27,8 @@ Search.prototype.update = function(message) {
 				new Notification('Place shared', {
 					body: message.name+' shared a place: '+place.name
 				})
+			else
+				new Toast(message.name + ' shared this place')
 		}.bind(this), function(error) {
 			alert("Someone shared a place, but we couldn't find it.")
 		})
