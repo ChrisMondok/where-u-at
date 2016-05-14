@@ -95,8 +95,10 @@ Search.prototype.updateInfoWindow = function() {
 
 	var content = document.createElement('div')
 
+	content.className = 'place-details'
+
 	if(this.result.name) {
-		var name = document.createElement('div')
+		var name = document.createElement('header')
 		name.textContent = this.result.name
 		content.appendChild(name)
 	}
@@ -105,6 +107,32 @@ Search.prototype.updateInfoWindow = function() {
 		var address = document.createElement('address')
 		address.textContent = this.result.formatted_address
 		content.appendChild(address)
+	}
+
+	if(this.result.opening_hours) {
+		var openingHours = this.result.opening_hours
+		var openNow = document.createElement('div')
+
+		openNow.textContent = openingHours.open_now ? 'Open' : 'Closed'
+		openNow.className = openingHours.open_now ? 'open-now' : 'closed-now'
+		content.appendChild(openNow)
+
+		if(openingHours.weekday_text) {
+			var day = (new Date().getDay() + 6) % 7
+			var hours = document.createElement('div')
+			hours.textContent = openingHours.weekday_text[day]
+			content.appendChild(hours)
+		}
+	}
+
+	if(this.result.international_phone_number) {
+		var phoneLink = document.createElement('a')
+		phoneLink.href = 'tel:'+this.result.international_phone_number.replace(/\s/g,'')
+		phoneLink.textContent = this.result.formatted_phone_number || this.result.international_phone_number
+
+		var phoneBox = document.createElement('div')
+		phoneBox.appendChild(phoneLink)
+		content.appendChild(phoneBox)
 	}
 
 	var button = document.createElement('button')
