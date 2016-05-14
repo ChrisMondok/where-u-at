@@ -28,9 +28,11 @@ server.get(/\/client\/?.*/, restify.serveStatic({
 }))
 
 fs.readFile('google-maps-api-key', function(error, key) {
+	key = key.toString()
+
 	server.get('/google-maps-api.js', function(req, res, next) {
-		var gmapsApi = '//maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE&callback=mapsLoaded&libraries=places'
-		return res.redirect(gmapsApi.replace('YOUR_KEY_HERE', key.toString()), next)
+		var url = '//maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=mapsLoaded&libraries=places'
+		return res.redirect(url.replace('YOUR_API_KEY', key), next)
 	})
 })
 
