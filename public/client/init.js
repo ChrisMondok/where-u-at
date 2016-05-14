@@ -10,8 +10,10 @@ function mapsLoaded() {
 
 addEventListener('load', function() {
 	var comms = new Comms()
+
 	var myLocation = null
 	var friendsList = null
+	var search = null
 
 	setUpForm()
 
@@ -93,6 +95,7 @@ addEventListener('load', function() {
 	function createWidgets(connection, map, position) {
 		myLocation = new MyLocation(map, position)
 		friendsList = new FriendsList(map)
+		search = new Search(map)
 	}
 
 	function startWatchingPosition() {

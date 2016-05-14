@@ -5,8 +5,6 @@ function MyLocation(map, position) {
 
 	this.initControls()
 
-	this.search = new Search(this.map)
-
 	var yourLocationAccuracy
 
 	setTimeout(function() {
