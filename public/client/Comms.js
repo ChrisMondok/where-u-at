@@ -3,20 +3,43 @@ function Comms() {
 	this.outgoing = []
 	this.incoming = []
 	this.listeners = []
+
+	this.url = null
+
+	this.retry = new Retry(this.tryToConnect.bind(this))
 }
 
-Comms.prototype.connect = function(name, position) {
-	var url = 'ws://'+location.host+'?'+toQueryString({
+Comms.prototype.setup = function(name, position) {
+	this.url = 'ws://'+location.host+'?'+toQueryString({
 		name: name,
 		latitude: position.coords.latitude,
 		longitude: position.coords.longitude
 	})
+}
 
-	var ws = this.connection = new WebSocket(url)
+Comms.prototype.connect = function() {
+	var ct = new Toast('Connecting')
+	return this.retry.start().then(function() {
+		ct.close()
+		new Toast('Welcome')
+	}, function() {
+		ct.close()
+		new Toast("Giving up trying to connect.")
+	})
+}
+
+Comms.prototype.tryToConnect = function() {
+	if(!this.url)
+		throw new Error("Call setup first")
+
+	var ws = this.connection = new WebSocket(this.url)
 
 	var self = this
 	return new Promise(function(resolve, reject) {
+		var wasConnected = false
+
 		ws.addEventListener('open', function() {
+			wasConnected = true
 			self.flush()
 			resolve()
 		})
@@ -28,10 +51,14 @@ Comms.prototype.connect = function(name, position) {
 			reject(e)
 		}.bind(this))
 
-		ws.addEventListener('close', function() {
+		ws.addEventListener('close', function(e) {
 			console.log("Connection closed")
-			alert("Connection lost. You'll have to reload this page :(")
+			reject(e)
 			this.connection = null
+			if(wasConnected) {
+				new Toast("Connection lost")
+				this.connect()
+			}
 		}.bind(this))
 
 		ws.addEventListener('message', function(event) {
