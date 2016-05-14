@@ -14,9 +14,18 @@ server.get('/', function(req, res, next) {
 	return res.redirect('/client/index.html', next)
 })
 
+server.get('/es6-promise.min.js', restify.serveStatic({
+	directory: './node_modules/es6-promise/dist/es6-promise.min.js'
+}))
+
+server.get('/less.min.js', restify.serveStatic({
+	directory: './node_modules/less/dist'
+}))
+
 server.get(/\/client\/?.*/, restify.serveStatic({
 	directory: './public'
 }))
+
 
 server.listen(5555, function() {
 	console.log("We're live!")
