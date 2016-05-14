@@ -30,6 +30,7 @@ Comms.prototype.connect = function(name, position) {
 
 		ws.addEventListener('close', function() {
 			console.log("Connection closed")
+			alert("Connection lost. You'll have to reload this page :(")
 			this.connection = null
 		}.bind(this))
 

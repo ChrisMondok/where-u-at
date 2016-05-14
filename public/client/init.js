@@ -32,7 +32,6 @@ addEventListener('load', function() {
 
 	function begin(name) {
 		getPosition().then(function(position) {
-			 console.log("Got position")
 			 return Promise.all([
 				comms.connect(name, position),
 				googleMapsLoadedPromise.then(function() {
@@ -51,7 +50,6 @@ addEventListener('load', function() {
 	}
 
 	function getPosition() {
-		console.log("Called get position")
 		var checkbox = document.querySelector('#setup-form-container input[type=checkbox]')
 
 		checkbox.indeterminate = true
