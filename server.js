@@ -2,6 +2,7 @@ const restify = require('restify')
 const ws = require('ws')
 const url = require('url')
 const shortid = require('shortid')
+const fs = require('fs')
 
 const server = restify.createServer({
 	name: 'Get Together',
@@ -25,6 +26,13 @@ server.get('/less.min.js', restify.serveStatic({
 server.get(/\/client\/?.*/, restify.serveStatic({
 	directory: './public'
 }))
+
+fs.readFile('google-maps-api-key', function(error, key) {
+	server.get('/google-maps-api.js', function(req, res, next) {
+		var gmapsApi = '//maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE&callback=mapsLoaded&libraries=places'
+		return res.redirect(gmapsApi.replace('YOUR_KEY_HERE', key.toString()), next)
+	})
+})
 
 
 server.listen(5555, function() {
