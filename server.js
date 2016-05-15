@@ -2,10 +2,29 @@ const express = require('express')
 const url = require('url')
 const shortid = require('shortid')
 const fs = require('fs')
+const LEX = require('letsencrypt-express')
 
 var app = express()
 
 require('express-ws')(app)
+
+var lex = LEX.create({
+	configDir: require('os').homedir() + '/.config/letsencrypt/',
+	approveRegistration: function(hostname, cb) {
+		// full disclosure: I have no idea what I'm doing
+		// I'm supposed to check a user here, but I have no idea what that even means.
+		// who calls this?
+		
+		console.log("approveRegistration called with hostname "+hostname)
+
+		cb(null, {
+			domains: ['theentireinter.net'],
+			email: 'chris.mondok@gmail.com',
+			agreeTos: true
+		})
+	}
+
+})
 
 app.get('/', function(req, res, next) {
 	return res.redirect(301, '/client/index.html')
@@ -25,11 +44,6 @@ fs.readFile('google-maps-api-key', function(error, key) {
 		return res.redirect(302, encodeURI(url.replace('YOUR_API_KEY', key)))
 	})
 })
-
-app.listen(5555, function() {
-	console.log("We're live!")
-})
-
 
 const connections = []
 
@@ -83,4 +97,11 @@ app.ws('/', function(ws, req) {
 				}
 			})
 	}
+})
+
+lex.onRequest = app;
+
+lex.listen([80, 8080], [443, 5001], function() {
+	var protocol = ('requestCert' in this) ? 'https' : 'http'
+	console.log("Listening at " + protocol + '://localhost:' + this.address().port)
 })
