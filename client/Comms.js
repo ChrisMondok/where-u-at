@@ -10,7 +10,7 @@ function Comms() {
 }
 
 Comms.prototype.setup = function(name, position) {
-	this.url = 'ws://'+location.host+'?'+toQueryString({
+	this.url = 'wss://'+location.host+'?'+toQueryString({
 		name: name,
 		latitude: position.coords.latitude,
 		longitude: position.coords.longitude

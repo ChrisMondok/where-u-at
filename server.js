@@ -1,55 +1,40 @@
-const express = require('express')
+const LEX = require('letsencrypt-express')
+const WebSocketServer = require('ws').Server
+const https = require('spdy')
+const StaticServer = require('node-static').Server
+
 const url = require('url')
 const shortid = require('shortid')
+
 const fs = require('fs')
-const LEX = require('letsencrypt-express')
 
-var app = express()
+const lex = LEX.create({
+	configDir: '/etc/letsencrypt'
+})
 
-require('express-ws')(app)
+const server = https.createServer(lex.httpsOptions, LEX.createAcmeResponder(lex, onRequest))
 
-var lex = LEX.create({
-	configDir: require('os').homedir() + '/.config/letsencrypt/',
-	approveRegistration: function(hostname, cb) {
-		// full disclosure: I have no idea what I'm doing
-		// I'm supposed to check a user here, but I have no idea what that even means.
-		// who calls this?
-		
-		console.log("approveRegistration called with hostname "+hostname)
+const wss = new WebSocketServer({server: server})
 
-		cb(null, {
-			domains: ['theentireinter.net'],
-			email: 'chris.mondok@gmail.com',
-			agreeTos: true
-		})
+const clientFileServer = new StaticServer('./client')
+const nodeModuleServer = new StaticServer('./node_modules/')
+
+function onRequest(request, response) {
+	var path = url.parse(request.url, true).path
+	switch (path) {
+	case '/es6-promise.min.js':
+		return nodeModuleServer.serveFile('es6-promise/dist/es6-promise.min.js', 200, {}, request, response)
+	case '/less.min.js':
+		return nodeModuleServer.serveFile('less/dist/less.min.js', 200, {}, request, response)
+	default:
+		return clientFileServer.serve(request, response)
 	}
-
-})
-
-app.get('/', function(req, res, next) {
-	return res.redirect(301, '/client/index.html')
-})
-
-app.get('/es6-promise.min.js', express.static('./node_modules/es6-promise/dist'))
-
-app.get('/less.min.js', express.static('./node_modules/less/dist'))
-
-app.get(/\/client\/?.*/, express.static('./public'))
-
-fs.readFile('google-maps-api-key', function(error, key) {
-	key = key.toString()
-
-	app.get('/google-maps-api.js', function(req, res) {
-		var url = '//maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=mapsLoaded&libraries=places'
-		return res.redirect(302, encodeURI(url.replace('YOUR_API_KEY', key)))
-	})
-})
+}
 
 const connections = []
 
-app.ws('/', function(ws, req) {
+wss.on('connection', function(ws) {
 	var name
-
 	var id = shortid.generate()
 
 	var query = url.parse(ws.upgradeReq.url, true).query
@@ -99,9 +84,4 @@ app.ws('/', function(ws, req) {
 	}
 })
 
-lex.onRequest = app;
-
-lex.listen([80, 8080], [443, 5001], function() {
-	var protocol = ('requestCert' in this) ? 'https' : 'http'
-	console.log("Listening at " + protocol + '://localhost:' + this.address().port)
-})
+server.listen(443)
