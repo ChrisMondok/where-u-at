@@ -2,6 +2,7 @@ const WebSocketServer = require('ws').Server
 const StaticServer = require('node-static').Server
 const url = require('url')
 const shortid = require('shortid')
+const Cliques = require('./Cliques')
 
 const fs = require('fs')
 
@@ -17,11 +18,20 @@ const nodeModuleServer = new StaticServer('./node_modules/')
 function serveClientFiles(request, response) {
 	var path = url.parse(request.url, true).path
 	switch (path) {
+	case '/':
+	case '/index.html':
+		response.writeHead(303, {
+			Location: `/${shortid.generate()}`,
+		})
+		response.end()
+		return
 	case '/es6-promise.min.js':
 		return nodeModuleServer.serveFile('es6-promise/dist/es6-promise.min.js', 200, {}, request, response)
 	case '/less.min.js':
 		return nodeModuleServer.serveFile('less/dist/less.min.js', 200, {}, request, response)
 	default:
+		if(shortid.isValid(path.slice(1)))
+			return clientFileServer.serveFile('index.html', 200, {}, request, response)
 		return clientFileServer.serve(request, response)
 	}
 }
@@ -29,53 +39,12 @@ function serveClientFiles(request, response) {
 const connections = []
 const wss = new WebSocketServer({server: server})
 wss.on('connection', function(ws) {
-	var name
-	const id = shortid.generate()
-
-	const query = url.parse(ws.upgradeReq.url, true).query
-
-	if(query.name && query.latitude && query.longitude) {
-		name = query.name
-		console.log(name+" joined")
-		connections.push(ws)
-		ws.on('close', function() {
-			console.log(name+" left")
-			connections.splice(connections.indexOf(ws), 1)
-			sendToOthers({
-				event: "left",
-				id: id,
-				name: name
-			})
-		})
-	}
+	const path = url.parse(ws.upgradeReq.url, true).pathname.slice(1)
+	if(shortid.isValid(path))
+		Cliques.get(path).add(ws)
 	else {
-		console.log("Dropping invalid request")
+		console.log("Rejecting request for "+path)
 		ws.close()
-	}
-
-	ws.on('message', function(message) {
-		var payload = {}
-		try {
-			payload = JSON.parse(message)
-			payload.id = id
-			payload.name = name
-			sendToOthers(payload)
-		} catch (e) {
-			console.error(e)
-			ws.close()
-		}
-	})
-
-	function sendToOthers(message) {
-		connections
-			.filter(function(c) { return c != ws })
-			.forEach(function(other) {
-				try {
-					other.send(JSON.stringify(message))
-				} catch (e) {
-					console.error("Failed to send to "+name+": "+e)
-				}
-			})
 	}
 })
 
