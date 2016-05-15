@@ -32,7 +32,7 @@ FriendsList.prototype.addFriend = function(friend) {
 	li.setAttribute('data-friend-id', friend.id)
 	li.textContent = friend.name
 	this.list.appendChild(li)
-	li.addEventListener('click', friend.showWindow.bind(friend))
+	li.addEventListener('click', friend.clicked.bind(friend))
 
 	new Toast(friend.name+' joined')
 }

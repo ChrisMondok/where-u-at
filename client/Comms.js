@@ -22,7 +22,6 @@ Comms.prototype.connect = function() {
 	var ct = new Toast('Connecting')
 	return this.retry.start().then(function() {
 		ct.close()
-		new Toast('Welcome')
 	}, function() {
 		ct.close()
 		new Toast("Giving up trying to connect.")

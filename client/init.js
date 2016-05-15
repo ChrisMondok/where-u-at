@@ -11,7 +11,6 @@ function mapsLoaded() {
 addEventListener('load', function() {
 	var comms = new Comms()
 
-	var myLocation = null
 	var friendsList = null
 	var search = null
 
@@ -93,14 +92,12 @@ addEventListener('load', function() {
 	}
 
 	function createWidgets(connection, map, position) {
-		myLocation = new MyLocation(map, position)
 		friendsList = new FriendsList(map)
 		search = new Search(map, comms)
 	}
 
 	function startWatchingPosition() {
 		navigator.geolocation.watchPosition(function(position) {
-			myLocation.position = position
 			try {
 				comms.send({
 					event: 'location-updated',

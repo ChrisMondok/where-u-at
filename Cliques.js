@@ -46,12 +46,11 @@ Clique.prototype.onMessage = function(sender, message) {
 		payload = JSON.parse(message)
 		payload.id = sender.id
 		payload.name = sender.name
-		this.sendToOthers(sender, payload)
+		this.broadcast(payload)
 	} catch (e) {
 		console.error(e)
 		sender.close()
 	}
-
 }
 
 Clique.prototype.remove = function(ws) {
@@ -69,19 +68,6 @@ Clique.prototype.remove = function(ws) {
 			event: 'left',
 			id: ws.id,
 			name: ws.name
-		})
-}
-
-Clique.prototype.sendToOthers = function(sender, message) {
-	var json = JSON.stringify(message)
-	this.friends
-		.filter(c => c != sender)
-		.forEach(o => {
-			try {
-				o.send(json)
-			} catch (e) {
-				console.error(`Failed to send to ${sender.name}: ${e}`)
-			}
 		})
 }
 
