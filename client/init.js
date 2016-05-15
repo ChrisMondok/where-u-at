@@ -1,18 +1,9 @@
-var resolveMap
-
-var googleMapsLoadedPromise = new Promise(function(r, reject) {
-	resolveMap = r
-})
-
-function mapsLoaded() {
-	resolveMap()
-}
-
 addEventListener('load', function() {
 	var comms = new Comms()
 
 	var friendsList = null
 	var search = null
+	var destinationView = null
 
 	setUpForm()
 
@@ -34,9 +25,7 @@ addEventListener('load', function() {
 			 comms.setup(name, position)
 			 return Promise.all([
 				comms.connect(),
-				googleMapsLoadedPromise.then(function() {
-					return makeMap(document.querySelector('main'), position)
-				})
+				makeMap(document.querySelector('main'), position)
 			]).then(function(stuff) {
 				createWidgets(stuff[0], stuff[1], position)
 				return stuff[0]
@@ -94,6 +83,7 @@ addEventListener('load', function() {
 	function createWidgets(connection, map, position) {
 		friendsList = new FriendsList(map)
 		search = new Search(map, comms)
+		destinationView = new DestinationView(map, comms)
 	}
 
 	function startWatchingPosition() {
@@ -113,7 +103,7 @@ addEventListener('load', function() {
 		while(comms.peek()) {
 			var message = comms.read()
 			friendsList.update(message)
-			search.update(message)
+			destinationView.update(message)
 		}
 	}
 
