@@ -1,25 +1,20 @@
-const LEX = require('letsencrypt-express')
 const WebSocketServer = require('ws').Server
-const https = require('spdy')
 const StaticServer = require('node-static').Server
-
 const url = require('url')
 const shortid = require('shortid')
 
 const fs = require('fs')
 
-const lex = LEX.create({
-	configDir: '/etc/letsencrypt'
-})
 
-const server = https.createServer(lex.httpsOptions, LEX.createAcmeResponder(lex, onRequest))
+const testing = process.argv.slice(2).indexOf('--testing') != -1
+const server = createServer(testing, serveClientFiles)
 
-const wss = new WebSocketServer({server: server})
+server.listen(testing ? 8080 : 443)
 
 const clientFileServer = new StaticServer('./client')
 const nodeModuleServer = new StaticServer('./node_modules/')
 
-function onRequest(request, response) {
+function serveClientFiles(request, response) {
 	var path = url.parse(request.url, true).path
 	switch (path) {
 	case '/es6-promise.min.js':
@@ -32,12 +27,12 @@ function onRequest(request, response) {
 }
 
 const connections = []
-
+const wss = new WebSocketServer({server: server})
 wss.on('connection', function(ws) {
 	var name
-	var id = shortid.generate()
+	const id = shortid.generate()
 
-	var query = url.parse(ws.upgradeReq.url, true).query
+	const query = url.parse(ws.upgradeReq.url, true).query
 
 	if(query.name && query.latitude && query.longitude) {
 		name = query.name
@@ -84,4 +79,14 @@ wss.on('connection', function(ws) {
 	}
 })
 
-server.listen(443)
+function createServer(testing, callback) {
+	if(testing)
+		return require('http').createServer(callback)
+	else {
+		const LEX = require('letsencrypt-express')
+		const lex = LEX.create({
+			configDir: '/etc/letsencrypt'
+		})
+		return require('spdy').createServer(lex.httpsOptions, LEX.createAcmeResponder(lex, callback))
+	}
+}
