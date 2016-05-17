@@ -20,7 +20,6 @@ addEventListener('load', function() {
 	}
 
 	function begin(name) {
-		Notification.requestPermission()
 		getPosition().then(function(position) {
 			 comms.setup(name, position)
 			 return Promise.all([

@@ -27,11 +27,7 @@ DestinationView.prototype.update = function(message) {
 			this.marker.setPosition(place.geometry.location)
 			this.marker.setVisible(true)
 
-			if(document.hidden)
-				new Notification('Place shared', {
-					body: message.name+' shared a place: '+place.name
-				})
-			else new Toast(message.name + ' shared this place')
+			new Toast(message.name + ' shared this place')
 
 		}.bind(this), function(error) {
 			new Toast(message.name + "shared a place, but we couldn't find it.")
