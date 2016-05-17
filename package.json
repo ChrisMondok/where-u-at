@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "author": "",
+  "scripts": {
+    "dev": "node server.js --testing",
+    "prod": "sudo node server.js"
+  },
   "dependencies": {
     "es6-promise": "^3.2.1",
     "less": "^2.7.1",
