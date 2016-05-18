@@ -5,34 +5,17 @@ function FriendsList(map) {
 }
 
 FriendsList.prototype.update = function(message) {
-	var friend = this.friends.find({id: message.id})
 	switch(message.event) {
-		case 'friend-joined':
-			var friends = message.friends || [];
-			friends.forEach(function(friend, index){
-				//only add if the friends not already in the room
-				//Should probably figure out a better way of handling this so we
-				//don't have to always iterate over the friends list
-				if(!this.friends.find({id: friend.id}))
-					this.addFriend(new Friend(this.map, friend))
-			}, this)
+		case 'friends-list-updated':
+			this.handleFriendsListUpdated(message)
 			break
 		case 'location-updated':
-			if(friend) friend.update(message)
-			else this.addFriend(new Friend(this.map, message))
+			this.handleUpdate(message)
 			break
 		case 'left':
-			if(friend) this.removeFriend(friend)
+			this.handleFriendLeft(message)
 			break
 	}
-}
-
-FriendsList.prototype.removeFriend = function(friend) {
-	this.list.removeChild(this.list.querySelector('[data-friend-id='+friend.id+']'))
-	friend.destroy() //harsh
-	this.friends.remove(friend)
-
-	new Toast(friend.name+' left')
 }
 
 FriendsList.prototype.addFriend = function(friend) {
@@ -45,6 +28,35 @@ FriendsList.prototype.addFriend = function(friend) {
 	li.addEventListener('click', friend.clicked.bind(friend))
 
 	new Toast(friend.name+' joined')
+}
+
+FriendsList.prototype.removeFriend = function(friend) {
+	this.list.removeChild(this.list.querySelector('[data-friend-id='+friend.id+']'))
+	friend.destroy() //harsh
+	this.friends.remove(friend)
+
+	new Toast(friend.name+' left')
+}
+
+FriendsList.prototype.handleUpdate = function(message) {
+	var friend = this.friends.find({id: message.id})
+	if(friend) friend.update(message)
+	else this.addFriend(new Friend(this.map, message))
+}
+
+FriendsList.prototype.handleFriendLeft = function(message) {
+	var friend = this.friends.find({id: message.id})
+	if(friend) this.removeFriend(friend)
+}
+
+FriendsList.prototype.handleFriendsListUpdated = function(message) {
+	this.friends.filter(function(friend) {
+		return !message.friends.any({id: friend.id})
+	}, this).forEach(this.removeFriend, this)
+
+	message.friends.forEach(function(friend) {
+		this.handleUpdate(friend)
+	}, this)
 }
 
 FriendsList.prototype.initControls = function() {

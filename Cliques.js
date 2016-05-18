@@ -47,7 +47,7 @@ Clique.prototype.add = function(ws) {
 	})
 
 	this.sendTo(ws, {
-		event: 'friend-joined',
+		event: 'friends-list-updated',
 		friends: this.friends.map(f => {
 			return {
 				id: f.id,
