@@ -46,6 +46,16 @@ Clique.prototype.add = function(ws) {
 		this.remove(ws)
 	})
 
+	this.sendTo(ws, {
+		event: 'friend-joined',
+		friends: this.friends.map(f => {
+			return {
+				id: f.id,
+				position: f.position,
+				name: f.name
+			}
+		})
+	})
 }
 
 Clique.prototype.onMessage = function(sender, message) {
@@ -53,15 +63,6 @@ Clique.prototype.onMessage = function(sender, message) {
 	try {
 		payload = JSON.parse(message)
 		switch (payload.event) {
-			case 'friend-joined':
-				payload.friends = this.friends.map(friend => {
-					return {
-						id: friend.id,
-						position: friend.position,
-						name: friend.name
-					}
-				})
-				break
 			case 'location-updated':
 				sender.position = payload.position
 				break
@@ -96,15 +97,20 @@ Clique.prototype.remove = function(ws) {
 }
 
 Clique.prototype.broadcast = function(message) {
-	var json = JSON.stringify(message)
 	this.friends.forEach((f) => {
-		try {
-			f.send(json)
-		} catch (e) {
-			console.error(`Failed to send message: ${e}`)
-		}
+		this.sendTo(f, message)
 	})
 }
+
+Clique.prototype.sendTo = function(recipient, message) {
+	var json = JSON.stringify(message)
+	try {
+		recipient.send(json)
+	} catch (e) {
+		console.error(`Failed to send message: ${e}`)
+	}
+}
+
 
 module.exports.get = function getClique(name) {
 	if(!(name in cliques))

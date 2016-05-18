@@ -32,20 +32,9 @@ addEventListener('load', function() {
 		}).then(function() {
 			startWatchingPosition()
 			comms.addListener(readMessages)
-			getCurrentUserList(name)
 		}, function(e) {
 			alert(e)
 		})
-	}
-	function getCurrentUserList(){
-		try {
-			comms.send({
-				event: 'friend-joined',
-				user: name
-			})
-		} catch(e) {
-			console.log(e)
-		}
 	}
 
 	function getPosition() {
