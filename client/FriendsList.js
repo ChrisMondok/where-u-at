@@ -19,6 +19,7 @@ FriendsList.prototype.update = function(message) {
 			break
 		case 'location-updated':
 			if(friend) friend.update(message)
+			else this.addFriend(new Friend(this.map, message))
 			break
 		case 'left':
 			if(friend) this.removeFriend(friend)
