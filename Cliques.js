@@ -35,7 +35,6 @@ Clique.prototype.add = function(ws) {
 		}
 	}
 
-
 	console.log(`${ws.name} (${ws.id}) joined ${this.name}`)
 
 	this.friends.push(ws)
@@ -60,7 +59,8 @@ Clique.prototype.add = function(ws) {
 	this.sendToOthers(ws, {
 		event: 'friend-joined',
 		name: ws.name,
-		id: ws.id
+		id: ws.id,
+		position: ws.position
 	})
 }
 

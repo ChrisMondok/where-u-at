@@ -8,6 +8,7 @@ FriendsList.prototype.update = function(message) {
 	switch(message.event) {
 		case 'friend-joined':
 			new Toast(message.name+' joined')
+			this.handleUpdate(message)
 			break
 		case 'friends-list-updated':
 			this.handleFriendsListUpdated(message)
