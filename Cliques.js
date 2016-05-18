@@ -38,14 +38,33 @@ Clique.prototype.add = function(ws) {
 	ws.on('close', (m) => {
 		this.remove(ws)
 	})
+
 }
 
 Clique.prototype.onMessage = function(sender, message) {
 	var payload = {}
 	try {
 		payload = JSON.parse(message)
-		payload.id = sender.id
-		payload.name = sender.name
+		switch (payload.event) {
+			case 'friend-joined':
+				//Chris, how can I clean this up? This looks
+				//mad ugly
+				const friends = this.friends.length !== 0 ?
+												this.friends.map((friend) => {
+													console.log(friend)
+													return { id: friend.id, name: friend.name}
+												}) :
+												[]
+				payload.friends = friends
+				payload.id = sender.id
+				payload.name = sender.name
+				break
+			default:
+				payload.id = sender.id
+				payload.name = sender.name
+				break
+		}
+		console.log(payload)
 		this.broadcast(payload)
 	} catch (e) {
 		console.error(e)
@@ -60,7 +79,7 @@ Clique.prototype.remove = function(ws) {
 		console.error("Trying to remove a non-member from clique "+this.name)
 	else
 		this.friends.splice(this.friends.indexOf(ws), 1)
-	
+
 	if(!this.friends.length)
 		this.destroy()
 	else

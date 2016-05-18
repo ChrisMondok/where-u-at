@@ -7,10 +7,23 @@ function FriendsList(map) {
 FriendsList.prototype.update = function(message) {
 	var friend = this.friends.find({id: message.id})
 	switch(message.event) {
+		/**
+		 * Initial Case where a friend joins. This will expect a list
+		 * of friends returned from the backend and will add them to the user.
+		 */
+		case 'friend-joined':
+			var friends = message.friends || [];
+			friends.forEach(function(friend, index){
+				//only add if the friends not already in the room
+				//Should probably figure out a better way of handling this so we
+				//don't have to always iterate over the friends list
+				if(!this.friends.find({id: friend.id}))
+					this.addFriend(new Friend(this.map, friend))
+			}, this)
+			break
 		case 'location-updated':
 			if(friend) friend.update(message)
-			else this.addFriend(new Friend(this.map, message))
-			break;
+			break
 		case 'left':
 			if(friend) this.removeFriend(friend)
 			break

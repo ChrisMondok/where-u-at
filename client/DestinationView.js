@@ -21,7 +21,8 @@ function DestinationView(map, comms) {
 }
 
 DestinationView.prototype.update = function(message) {
-	if(message.event == 'destination-set') {
+
+	if(message.event == 'destination-set' && message.placeId) {
 		this.getPlace(message.placeId).then(function(place) {
 			this.infoWindow.place = place
 			this.marker.setPosition(place.geometry.location)
