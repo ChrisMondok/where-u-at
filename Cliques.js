@@ -48,8 +48,15 @@ Clique.prototype.onMessage = function(sender, message) {
 		switch (payload.event) {
 			case 'friend-joined':
 				payload.friends = this.friends.map(friend => {
-					return { id: friend.id, name: friend.name}
+					return {
+						id: friend.id,
+						position: friend.position,
+						name: friend.name
+					}
 				})
+				break
+			case 'location-updated':
+				sender.position = payload.position
 				break
 			default:
 				break
