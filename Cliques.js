@@ -30,8 +30,8 @@ Clique.prototype.add = function(ws) {
 	ws.name = query.name
 	ws.position = {
 		coords: {
-			latitude: query.latitude,
-			longitude: query.longitude
+			latitude: Number(query.latitude),
+			longitude: Number(query.longitude)
 		}
 	}
 
