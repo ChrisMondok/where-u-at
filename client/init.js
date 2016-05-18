@@ -6,11 +6,7 @@ addEventListener('load', function() {
 	var destinationView = null
 
 	setUpForm()
-	/**
-	 * setupForm wil query for the form and append an event listener for submit.
-	 * Submit will call the begin function, which will instatiate the connection
-	 * and set the user up.
-	 */
+
 	function setUpForm() {
 		var form = document.querySelector('#setup-form-container form')
 
@@ -22,22 +18,16 @@ addEventListener('load', function() {
 
 		form.querySelector('button').disabled = false
 	}
-	/**
-	 *
-	 * @param  {string} name The name of the new user, the input. Should probably
-	 *                       validate this.
-	 * @return {stuff}      stuff, not quite sure what stuff is yet.
-	 */
+
 	function begin(name) {
 		getPosition().then(function(position) {
 			 comms.setup(name, position)
 			 return Promise.all([
 				comms.connect(),
 				makeMap(document.querySelector('main'), position)
-			]).then(function(stuff) {
-				console.log(stuff)
-				createWidgets(stuff[0], stuff[1], position)
-				return stuff[0]
+			]).then(function(resolvedPromises) {
+				createWidgets(resolvedPromises[0], resolvedPromises[1], position)
+				return resolvedPromises[0]
 			})
 		}).then(function() {
 			startWatchingPosition()
@@ -57,11 +47,7 @@ addEventListener('load', function() {
 			console.log(e)
 		}
 	}
-	/**
-	 * Get the users location through navigator.geolocation
-	 * @return {Promise} A promise that will eventually get the users
-	 *                     location.
-	 */
+
 	function getPosition() {
 		var checkbox = document.querySelector('#setup-form-container input[type=checkbox]')
 
@@ -78,13 +64,7 @@ addEventListener('load', function() {
 			})
 		})
 	}
-	/**
-	 * makeMap will create a new map using google maps api.
-	 * @param  {node} parent HTMLNode for the parent to append the map too
-	 * @param  {Object} position GeoLocation coordinates for where the user is
-	 * @return {promise}         Promise to handle adding and event listener to
-	 *                                   the maps.
-	 */
+
 	function makeMap(parent, position) {
 		var node = document.createElement('div')
 		parent.appendChild(node)
@@ -109,21 +89,13 @@ addEventListener('load', function() {
 			})
 		})
 	}
-	/**
-	 * Instaniate the current state for the new user
-	 * @param  {ws} connection WebSocket Connection
-	 * @param  {Object} map        Current Map
-	 * @param  {Object} position   Users current Location
-	 */
+
 	function createWidgets(connection, map, position) {
 		friendsList = new FriendsList(map)
 		search = new Search(map, comms)
 		destinationView = new DestinationView(map, comms)
 	}
-	/**
-	 * startWatchingPosition will try to update your location and send this
-	 * communication to Cliques to broadcast to the party
-	 */
+
 	function startWatchingPosition() {
 		navigator.geolocation.watchPosition(function(position) {
 			try {
@@ -136,11 +108,7 @@ addEventListener('load', function() {
 			}
 		})
 	}
-	/**
-	 * readMessages will iterate through the list of messages available
-	 * to the user and update the friendsList
-	 * @return {[type]} [description]
-	 */
+
 	function readMessages() {
 		while(comms.peek()) {
 			var message = comms.read()

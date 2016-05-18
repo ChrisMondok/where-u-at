@@ -95,7 +95,6 @@ Comms.prototype.read = function() {
 }
 
 Comms.prototype.send = function(message) {
-	console.log(message)
 	this.outgoing.push(message)
 	this.flush()
 }
