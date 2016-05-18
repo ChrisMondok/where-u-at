@@ -20,14 +20,21 @@ Clique.prototype.destroy = function() {
 Clique.prototype.add = function(ws) {
 	const query = url.parse(ws.upgradeReq.url, true).query
 
-	ws.id = shortid.generate()
-	ws.name = query.name
-
 	if(!['name', 'latitude', 'longitude'].every((p) => p in query)) {
 		console.error(`Dropping invalid join from ${ws.name}`)
 		ws.close()
 		return
 	}
+
+	ws.id = shortid.generate()
+	ws.name = query.name
+	ws.position = {
+		coords: {
+			latitude: query.latitude,
+			longitude: query.longitude
+		}
+	}
+
 
 	console.log(`${ws.name} (${ws.id}) joined ${this.name}`)
 
