@@ -69,7 +69,7 @@ Clique.prototype.onMessage = function(sender, message) {
 	try {
 		payload = JSON.parse(message)
 		switch (payload.event) {
-			case 'location-updated':
+			case 'friend-updated':
 				sender.position = payload.position
 				break
 			default:
@@ -96,7 +96,7 @@ Clique.prototype.remove = function(ws) {
 		this.destroy()
 	else
 		this.broadcast({
-			event: 'left',
+			event: 'friend-left',
 			id: ws.id,
 			name: ws.name
 		})

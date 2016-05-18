@@ -89,7 +89,7 @@ addEventListener('load', function() {
 		navigator.geolocation.watchPosition(function(position) {
 			try {
 				comms.send({
-					event: 'location-updated',
+					event: 'friend-updated',
 					position: position
 				})
 			} catch (e) {

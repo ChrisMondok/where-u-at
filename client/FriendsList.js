@@ -13,10 +13,10 @@ FriendsList.prototype.update = function(message) {
 		case 'friends-list-updated':
 			this.handleFriendsListUpdated(message)
 			break
-		case 'location-updated':
+		case 'friend-updated':
 			this.handleUpdate(message)
 			break
-		case 'left':
+		case 'friend-left':
 			this.handleFriendLeft(message)
 			break
 	}
