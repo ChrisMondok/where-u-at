@@ -1,5 +1,5 @@
 *.swp
 node_modules
 google-maps-api-key
-*.logs
+*.log
 

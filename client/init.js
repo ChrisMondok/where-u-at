@@ -54,7 +54,7 @@ addEventListener('load', function() {
 				user: name
 			})
 		} catch(e) {
-			console.log(`error getting the users list ${e}`)
+			console.log(e)
 		}
 	}
 	/**

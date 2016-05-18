@@ -3,8 +3,6 @@ function Comms() {
 	this.outgoing = []
 	this.incoming = []
 	this.listeners = []
-	this.lastConnection = []
-	this.destination = []
 	this.url = null
 
 	this.retry = new Retry(this.tryToConnect.bind(this))
