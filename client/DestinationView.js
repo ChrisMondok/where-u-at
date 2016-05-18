@@ -21,18 +21,27 @@ function DestinationView(map, comms) {
 }
 
 DestinationView.prototype.update = function(message) {
-
-	if(message.event == 'destination-set' && message.placeId) {
+	if(message.event != 'destination-set')
+		return
+	if(message.placeId) {
 		this.getPlace(message.placeId).then(function(place) {
 			this.infoWindow.place = place
 			this.marker.setPosition(place.geometry.location)
 			this.marker.setVisible(true)
 
-			new Toast(message.name + ' shared this place')
+			if(message.name)
+				new Toast(message.name + ' shared this place')
 
 		}.bind(this), function(error) {
-			new Toast(message.name + "shared a place, but we couldn't find it.")
+			if(message.name)
+				new Toast(message.name + "shared a place, but we couldn't find it.")
+			else
+				new Toast("We couldn't find the destination.")
 		})
+	}
+	else {
+		this.infoWindow.close()
+		this.marker.setVisible(false)
 	}
 }
 

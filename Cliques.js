@@ -5,6 +5,7 @@ const url = require('url')
 function Clique(name) {
 	this.name = name
 	this.friends = []
+	this.destination = null
 
 	if(cliques[name])
 		throw new Error("Trying to create duplicate clique "+name)
@@ -45,16 +46,7 @@ Clique.prototype.add = function(ws) {
 		this.remove(ws)
 	})
 
-	this.sendTo(ws, {
-		event: 'friends-list-updated',
-		friends: this.friends.map(f => {
-			return {
-				id: f.id,
-				position: f.position,
-				name: f.name
-			}
-		})
-	})
+	this.getFriendUpToSpeed(ws);
 
 	this.sendToOthers(ws, {
 		event: 'friend-joined',
@@ -68,15 +60,18 @@ Clique.prototype.onMessage = function(sender, message) {
 	var payload = {}
 	try {
 		payload = JSON.parse(message)
+		payload.id = sender.id
+		payload.name = sender.name
 		switch (payload.event) {
 			case 'friend-updated':
 				sender.position = payload.position
 				break
+			case 'destination-set':
+				this.destination = payload.placeId
+				break
 			default:
 				break
 		}
-		payload.id = sender.id
-		payload.name = sender.name
 		this.broadcast(payload)
 	} catch (e) {
 		console.error(e)
@@ -120,6 +115,24 @@ Clique.prototype.sendTo = function(recipient, message) {
 	} catch (e) {
 		console.error(`Failed to send message: ${e}`)
 	}
+}
+
+Clique.prototype.getFriendUpToSpeed = function(friend) {
+	this.sendTo(friend, {
+		event: 'friends-list-updated',
+		friends: this.friends.map(f => {
+			return {
+				id: f.id,
+				position: f.position,
+				name: f.name
+			}
+		})
+	})
+
+	this.sendTo(friend, {
+		event: 'destination-set',
+		placeId: this.destination
+	})
 }
 
 
