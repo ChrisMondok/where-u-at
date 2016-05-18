@@ -47,7 +47,9 @@ Clique.prototype.onMessage = function(sender, message) {
 		payload = JSON.parse(message)
 		switch (payload.event) {
 			case 'friend-joined':
-				payload.friends = this.friends.map((friend) => { id: friend.id, name: friend.name})
+				payload.friends = this.friends.map(friend => {
+					return { id: friend.id, name: friend.name}
+				})
 				break
 			default:
 				break
