@@ -6,6 +6,9 @@ function FriendsList(map) {
 
 FriendsList.prototype.update = function(message) {
 	switch(message.event) {
+		case 'friend-joined':
+			new Toast(message.name+' joined')
+			break
 		case 'friends-list-updated':
 			this.handleFriendsListUpdated(message)
 			break
@@ -26,16 +29,12 @@ FriendsList.prototype.addFriend = function(friend) {
 	li.textContent = friend.name
 	this.list.appendChild(li)
 	li.addEventListener('click', friend.clicked.bind(friend))
-
-	new Toast(friend.name+' joined')
 }
 
 FriendsList.prototype.removeFriend = function(friend) {
 	this.list.removeChild(this.list.querySelector('[data-friend-id='+friend.id+']'))
 	friend.destroy() //harsh
 	this.friends.remove(friend)
-
-	new Toast(friend.name+' left')
 }
 
 FriendsList.prototype.handleUpdate = function(message) {
@@ -47,6 +46,7 @@ FriendsList.prototype.handleUpdate = function(message) {
 FriendsList.prototype.handleFriendLeft = function(message) {
 	var friend = this.friends.find({id: message.id})
 	if(friend) this.removeFriend(friend)
+	new Toast(message.name+' left')
 }
 
 FriendsList.prototype.handleFriendsListUpdated = function(message) {

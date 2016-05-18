@@ -56,6 +56,12 @@ Clique.prototype.add = function(ws) {
 			}
 		})
 	})
+
+	this.sendToOthers(ws, {
+		event: 'friend-joined',
+		name: ws.name,
+		id: ws.id
+	})
 }
 
 Clique.prototype.onMessage = function(sender, message) {
@@ -100,6 +106,11 @@ Clique.prototype.broadcast = function(message) {
 	this.friends.forEach((f) => {
 		this.sendTo(f, message)
 	})
+}
+
+Clique.prototype.sendToOthers = function(notRecipient, message) {
+	this.friends.filter(f => f != notRecipient)
+		.forEach(f => this.sendTo(f, message))
 }
 
 Clique.prototype.sendTo = function(recipient, message) {
