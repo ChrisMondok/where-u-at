@@ -4,7 +4,7 @@ addEventListener('load', function() {
 	var friendsList = null
 	var search = null
 	var destinationView = null
-
+	var watchPositionId = null
 	setUpForm()
 
 	function setUpForm() {
@@ -86,8 +86,9 @@ addEventListener('load', function() {
 	}
 
 	function startWatchingPosition() {
-		navigator.geolocation.watchPosition(function(position) {
+		watchPositionId = navigator.geolocation.watchPosition(function(position) {
 			try {
+				console.log(position)
 				comms.send({
 					event: 'friend-updated',
 					position: position
@@ -97,7 +98,11 @@ addEventListener('load', function() {
 			}
 		})
 	}
-
+	function stopWatchingPosition() {
+		if (!watchPositionId)
+			return
+		navigator.geolocation.clearWatch(watchPositionId)
+	}
 	function readMessages() {
 		while(comms.peek()) {
 			var message = comms.read()
