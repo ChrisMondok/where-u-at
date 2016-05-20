@@ -4,9 +4,8 @@ addEventListener('load', function() {
 	var friendsList = null
 	var search = null
 	var destinationView = null
-
 	setUpForm()
-
+	setupHiddenEvent()
 	function setUpForm() {
 		var form = document.querySelector('#setup-form-container form')
 
@@ -97,7 +96,9 @@ addEventListener('load', function() {
 			}
 		})
 	}
-
+	function handleFriendStalled(flag) {
+		console.log(flag)
+	}
 	function readMessages() {
 		while(comms.peek()) {
 			var message = comms.read()
@@ -121,7 +122,22 @@ addEventListener('load', function() {
 		}, 500)
 
 	}
-
+	function setupHiddenEvent(){
+		var visibility = new Visibility()
+		document.addEventListener(visibility.visibilityChange, function(){
+			//broadcast event to set the friend-state to idle
+			var stale = document[visibility.hidden]
+			try {
+				comms.send({
+					event: 'friend-started-hiding',
+					stale: stale,
+				})
+			}
+			catch(e){
+				console.log(e)
+			}
+		}, false)
+	}
 })
 
 function toQueryString(obj) {

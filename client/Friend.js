@@ -68,4 +68,13 @@ Friend.prototype.update = function(info) {
 		if(info.position.coords.accuracy)
 			this.accuracyCircle.setRadius(info.position.coords.accuracy)
 	}
+	// var currentTimeInMilliseconds = new Date().getTime()
+	// var stale = currentTimeInMilliseconds >= info.staleAt
+
+	var icon = info.hiding ?
+						 'http://maps.google.com/mapfiles/ms/icons/green.png' :
+						 'http://maps.google.com/mapfiles/ms/icons/red.png'
+
+	this.marker.setIcon(icon)
+
 }

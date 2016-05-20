@@ -35,17 +35,14 @@ Clique.prototype.add = function(ws) {
 			longitude: Number(query.longitude)
 		}
 	}
-
+	ws.stale = false
+	ws.hiding = false
 	console.log(`${ws.name} (${ws.id}) joined ${this.name}`)
 
 	this.friends.push(ws)
 
 	ws.on('message', (m) => this.onMessage(ws, m))
-
-	ws.on('close', (m) => {
-		this.remove(ws)
-	})
-
+	ws.on('close', (m) => { this.remove(ws) })
 	this.getFriendUpToSpeed(ws);
 
 	this.sendToOthers(ws, {
@@ -62,6 +59,7 @@ Clique.prototype.onMessage = function(sender, message) {
 		payload = JSON.parse(message)
 		payload.id = sender.id
 		payload.name = sender.name
+
 		switch (payload.event) {
 			case 'friend-updated':
 				sender.position = payload.position
@@ -69,6 +67,8 @@ Clique.prototype.onMessage = function(sender, message) {
 			case 'destination-set':
 				this.destination = payload.placeId
 				break
+			case 'friend-started-hiding':
+				payload.hiding = true
 			default:
 				break
 		}
@@ -103,8 +103,8 @@ Clique.prototype.broadcast = function(message) {
 	})
 }
 
-Clique.prototype.sendToOthers = function(notRecipient, message) {
-	this.friends.filter(f => f != notRecipient)
+Clique.prototype.sendToOthers = function(sender, message) {
+	this.friends.filter(f => f != sender)
 		.forEach(f => this.sendTo(f, message))
 }
 
@@ -124,7 +124,8 @@ Clique.prototype.getFriendUpToSpeed = function(friend) {
 			return {
 				id: f.id,
 				position: f.position,
-				name: f.name
+				name: f.name,
+				stale: f.stale
 			}
 		})
 	})
