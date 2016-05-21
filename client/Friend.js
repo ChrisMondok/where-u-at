@@ -12,7 +12,7 @@ function Friend(map, info) {
 
 Friend.prototype.initMarkers = function() {
 	this.marker = new google.maps.Marker({
-		map: this.map,
+		map: this.map
 	})
 
 	this.marker.addListener('click',this.clicked.bind(this))
