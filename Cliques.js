@@ -35,7 +35,6 @@ Clique.prototype.add = function(ws) {
 			longitude: Number(query.longitude)
 		}
 	}
-	ws.stale = false
 	ws.hiding = false
 	console.log(`${ws.name} (${ws.id}) joined ${this.name}`)
 
@@ -49,7 +48,8 @@ Clique.prototype.add = function(ws) {
 		event: 'friend-joined',
 		name: ws.name,
 		id: ws.id,
-		position: ws.position
+		position: ws.position,
+		hiding: ws.hiding
 	})
 }
 
@@ -68,7 +68,7 @@ Clique.prototype.onMessage = function(sender, message) {
 				this.destination = payload.placeId
 				break
 			case 'friend-started-hiding':
-				payload.hiding = true
+				sender.hiding = payload.hiding
 			default:
 				break
 		}
@@ -125,7 +125,7 @@ Clique.prototype.getFriendUpToSpeed = function(friend) {
 				id: f.id,
 				position: f.position,
 				name: f.name,
-				stale: f.stale
+				hiding: f.hiding
 			}
 		})
 	})

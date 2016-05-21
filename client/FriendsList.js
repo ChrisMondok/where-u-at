@@ -16,12 +16,18 @@ FriendsList.prototype.update = function(message) {
 		case 'friend-updated':
 			this.handleUpdate(message)
 			break
+		case 'friend-started-hiding':
+			this.handleFriendHiding(message)
+			break
 		case 'friend-left':
 			this.handleFriendLeft(message)
 			break
 	}
 }
-
+FriendsList.prototype.handleFriendHiding = function(message) {
+	var friend = this.friends.find({id: message.id})
+	if(friend) friend.update(message)
+}
 FriendsList.prototype.addFriend = function(friend) {
 	this.friends.push(friend)
 	var li = document.createElement('li')

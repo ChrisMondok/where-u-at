@@ -130,7 +130,7 @@ addEventListener('load', function() {
 			try {
 				comms.send({
 					event: 'friend-started-hiding',
-					stale: stale,
+					hiding: true,
 				})
 			}
 			catch(e){
