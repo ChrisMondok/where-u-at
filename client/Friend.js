@@ -34,10 +34,16 @@ Friend.prototype.initMarkers = function() {
 }
 
 Friend.prototype.clicked = function() {
-		this.infoWindow.open(this.map, this.marker)
-		this.accuracyCircle.setVisible(true)
+		var visible = this.accuracyCircle.visible
+		this.toggleInfoWindow(visible)
+		this.accuracyCircle.setVisible(!visible)
 }
-
+Friend.prototype.toggleInfoWindow = function(visible) {
+	if(visible)
+		this.infoWindow.close(this.map, this.marker)
+	else
+		this.infoWindow.open(this.map, this.marker)
+}
 Friend.prototype.destroy = function() {
 	this.marker.setMap(null)
 	this.infoWindow.setMap(null)
@@ -68,4 +74,9 @@ Friend.prototype.update = function(info) {
 		if(info.position.coords.accuracy)
 			this.accuracyCircle.setRadius(info.position.coords.accuracy)
 	}
+	this.updateMarker(info.stale)
+}
+Friend.prototype.updateMarker = function(stale) {
+	var icon = stale ? 'http://maps.google.com/mapfiles/ms/icons/green.png' : ''
+	this.marker.setIcon(icon)
 }
