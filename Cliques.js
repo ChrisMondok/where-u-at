@@ -67,7 +67,7 @@ Clique.prototype.onMessage = function(sender, message) {
 			case 'destination-set':
 				this.destination = payload.placeId
 				break
-			case 'friend-started-hiding':
+			case 'friend-hiding':
 				sender.hiding = payload.hiding
 			default:
 				break
@@ -125,7 +125,8 @@ Clique.prototype.getFriendUpToSpeed = function(friend) {
 				id: f.id,
 				position: f.position,
 				name: f.name,
-				hiding: f.hiding
+				hiding: f.hiding,
+				stale: f.stale
 			}
 		})
 	})

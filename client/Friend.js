@@ -12,7 +12,7 @@ function Friend(map, info) {
 
 Friend.prototype.initMarkers = function() {
 	this.marker = new google.maps.Marker({
-		map: this.map
+		map: this.map,
 	})
 
 	this.marker.addListener('click',this.clicked.bind(this))
@@ -68,13 +68,14 @@ Friend.prototype.update = function(info) {
 		if(info.position.coords.accuracy)
 			this.accuracyCircle.setRadius(info.position.coords.accuracy)
 	}
-	// var currentTimeInMilliseconds = new Date().getTime()
-	// var stale = currentTimeInMilliseconds >= info.staleAt
 
-	var icon = info.hiding ?
-						 'http://maps.google.com/mapfiles/ms/icons/green.png' :
-						 'http://maps.google.com/mapfiles/ms/icons/red.png'
 
-	this.marker.setIcon(icon)
+	if (info.stale) {
+		this.stale = true
+		var icon = info.hiding ?
+							 'http://maps.google.com/mapfiles/ms/icons/green.png' :
+							 'http://maps.google.com/mapfiles/ms/icons/red.png'
+		this.marker.setIcon(icon)
+	}
 
 }

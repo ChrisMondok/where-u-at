@@ -4,8 +4,9 @@ addEventListener('load', function() {
 	var friendsList = null
 	var search = null
 	var destinationView = null
+	var timeoutId = null
+	var timeout = 30000 //30s
 	setUpForm()
-	setupHiddenEvent()
 	function setUpForm() {
 		var form = document.querySelector('#setup-form-container form')
 
@@ -30,6 +31,7 @@ addEventListener('load', function() {
 			})
 		}).then(function() {
 			startWatchingPosition()
+			setupHiddenEvent()
 			comms.addListener(readMessages)
 		}, function(e) {
 			alert(e)
@@ -86,18 +88,44 @@ addEventListener('load', function() {
 
 	function startWatchingPosition() {
 		navigator.geolocation.watchPosition(function(position) {
-			try {
-				comms.send({
-					event: 'friend-updated',
-					position: position
-				})
-			} catch (e) {
-				console.error(e)
-			}
+			sendMessage({
+				event: 'friend-updated',
+				position: position
+			})
 		})
 	}
-	function handleFriendStalled(flag) {
-		console.log(flag)
+
+	function setupHiddenEvent(){
+		var visibility = new Visibility()
+		function handleVisibilityChange(){
+			var hiding = document[visibility.hidden]
+			if (hiding){
+				timeoutId = window.setTimeout(function(){
+					sendMessage({
+						event: 'friend-stale',
+						stale: true,
+						hiding: true
+					})
+				}, timeout)
+			}
+			else
+				window.clearTimeout(timeoutId)
+			sendMessage({
+				event: 'friend-hiding',
+				hiding: hiding
+			})
+		}
+		document.addEventListener(visibility.visibilityChange,
+			 												handleVisibilityChange, false)
+	}
+	function sendMessage(message){
+		if (!message) return
+		try {
+			comms.send(message)
+		}
+		catch(e) {
+			console.log(e)
+		}
 	}
 	function readMessages() {
 		while(comms.peek()) {
@@ -122,22 +150,7 @@ addEventListener('load', function() {
 		}, 500)
 
 	}
-	function setupHiddenEvent(){
-		var visibility = new Visibility()
-		document.addEventListener(visibility.visibilityChange, function(){
-			//broadcast event to set the friend-state to idle
-			var stale = document[visibility.hidden]
-			try {
-				comms.send({
-					event: 'friend-started-hiding',
-					hiding: true,
-				})
-			}
-			catch(e){
-				console.log(e)
-			}
-		}, false)
-	}
+
 })
 
 function toQueryString(obj) {

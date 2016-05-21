@@ -16,8 +16,12 @@ FriendsList.prototype.update = function(message) {
 		case 'friend-updated':
 			this.handleUpdate(message)
 			break
-		case 'friend-started-hiding':
+		case 'friend-hiding':
 			this.handleFriendHiding(message)
+			break
+		case 'friend-stale':
+			new Toast(message.name+' Is no longer active')
+			this.handleUpdate(message)
 			break
 		case 'friend-left':
 			this.handleFriendLeft(message)
@@ -27,6 +31,8 @@ FriendsList.prototype.update = function(message) {
 FriendsList.prototype.handleFriendHiding = function(message) {
 	var friend = this.friends.find({id: message.id})
 	if(friend) friend.update(message)
+	var text = message.hiding ? ' started hiding' : ' stopped hiding'
+	new Toast(message.name + text)
 }
 FriendsList.prototype.addFriend = function(friend) {
 	this.friends.push(friend)
