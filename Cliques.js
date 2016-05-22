@@ -62,7 +62,9 @@ Clique.prototype.onMessage = function(sender, message) {
 
 		switch (payload.event) {
 			case 'friend-updated':
-				sender.position = payload.position
+				sender.position = !payload.position ? sender.position : payload.position
+				sender.stale = payload.stale || false
+				sender.hidden = payload.hidden || false
 				break
 			case 'destination-set':
 				this.destination = payload.placeId
@@ -119,6 +121,7 @@ Clique.prototype.getFriendUpToSpeed = function(friend) {
 	this.sendTo(friend, {
 		event: 'friends-list-updated',
 		friends: this.friends.map(f => {
+			console.log(f)
 			return {
 				id: f.id,
 				position: f.position,
