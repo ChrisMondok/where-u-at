@@ -5,7 +5,7 @@ addEventListener('load', function() {
 	var search = null
 	var destinationView = null
 	var timeoutId = null
-	var timeout = 30000 //30s
+	var timeout = 1000 //30s
 	setUpForm()
 	function setUpForm() {
 		var form = document.querySelector('#setup-form-container form')
@@ -102,7 +102,7 @@ addEventListener('load', function() {
 			if (hiding){
 				timeoutId = window.setTimeout(function(){
 					sendMessage({
-						event: 'friend-stale',
+						event: 'friend-updated',
 						stale: true,
 						hiding: true
 					})
@@ -111,7 +111,7 @@ addEventListener('load', function() {
 			else
 				window.clearTimeout(timeoutId)
 			sendMessage({
-				event: 'friend-hiding',
+				event: 'friend-updated',
 				hiding: hiding
 			})
 		}

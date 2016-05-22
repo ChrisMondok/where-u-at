@@ -16,24 +16,12 @@ FriendsList.prototype.update = function(message) {
 		case 'friend-updated':
 			this.handleUpdate(message)
 			break
-		case 'friend-hiding':
-			this.handleFriendHiding(message)
-			break
-		case 'friend-stale':
-			new Toast(message.name+' Is no longer active')
-			this.handleUpdate(message)
-			break
 		case 'friend-left':
 			this.handleFriendLeft(message)
 			break
 	}
 }
-FriendsList.prototype.handleFriendHiding = function(message) {
-	var friend = this.friends.find({id: message.id})
-	if(friend) friend.update(message)
-	var text = message.hiding ? ' started hiding' : ' stopped hiding'
-	new Toast(message.name + text)
-}
+
 FriendsList.prototype.addFriend = function(friend) {
 	this.friends.push(friend)
 	var li = document.createElement('li')
@@ -54,6 +42,7 @@ FriendsList.prototype.handleUpdate = function(message) {
 	var friend = this.friends.find({id: message.id})
 	if(friend) friend.update(message)
 	else this.addFriend(new Friend(this.map, message))
+	if(message.stale) new Toast(message.name + ' has gone stale')
 }
 
 FriendsList.prototype.handleFriendLeft = function(message) {
