@@ -67,8 +67,6 @@ Clique.prototype.onMessage = function(sender, message) {
 			case 'destination-set':
 				this.destination = payload.placeId
 				break
-			case 'friend-hiding':
-				sender.hiding = payload.hiding
 			default:
 				break
 		}
