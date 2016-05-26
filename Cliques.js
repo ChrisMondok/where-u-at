@@ -61,10 +61,11 @@ Clique.prototype.onMessage = function(sender, message) {
 		payload.name = sender.name
 
 		switch (payload.event) {
+			case 'friend-state-updated':
+				sender.hiding = payload.hiding
+				break
 			case 'friend-updated':
-				sender.position = !payload.position ? sender.position : payload.position
-				sender.stale = payload.stale || false
-				sender.hidden = payload.hidden || false
+				sender.position = payload.position
 				break
 			case 'destination-set':
 				this.destination = payload.placeId

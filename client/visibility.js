@@ -1,9 +1,11 @@
 //heavy influence: https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API
 
-function Visibility(){
+function Visibility(comms){
+  this.comms = comms;
   this.hidden = null
   this.visibilityChange = null
   this.initControls()
+  this.handleVisibilityChange()
 }
 
 Visibility.prototype.initControls = function() {
@@ -20,4 +22,15 @@ Visibility.prototype.initControls = function() {
     this.hidden = "webkitHidden";
     this.visibilityChange = "webkitvisibilitychange";
   }
+}
+Visibility.prototype.handleVisibilityChange = function() {
+  function handleVisibilityChange(){
+    var hiding = document[this.hidden]
+    this.comms.send({
+      event: 'friend-state-updated',
+      hiding: hiding
+    })
+  }
+  document.addEventListener(this.visibilityChange,
+                            handleVisibilityChange.bind(this), false)
 }

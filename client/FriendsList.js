@@ -16,6 +16,9 @@ FriendsList.prototype.update = function(message) {
 		case 'friend-updated':
 			this.handleUpdate(message)
 			break
+		case 'friend-state-updated':
+			this.handleUpdate(message)
+			break
 		case 'friend-left':
 			this.handleFriendLeft(message)
 			break
@@ -42,7 +45,6 @@ FriendsList.prototype.handleUpdate = function(message) {
 	var friend = this.friends.find({id: message.id})
 	if(friend) friend.update(message)
 	else this.addFriend(new Friend(this.map, message))
-	if(message.stale) new Toast(message.name + ' has gone stale')
 }
 
 FriendsList.prototype.handleFriendLeft = function(message) {

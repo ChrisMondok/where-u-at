@@ -5,7 +5,7 @@ addEventListener('load', function() {
 	var search = null
 	var destinationView = null
 	var timeoutId = null
-	var timeout = 1000 //30s
+	var timeout = 1000 //1s
 	setUpForm()
 	function setUpForm() {
 		var form = document.querySelector('#setup-form-container form')
@@ -31,7 +31,7 @@ addEventListener('load', function() {
 			})
 		}).then(function() {
 			startWatchingPosition()
-			setupHiddenEvent()
+			setupHiddenEvent(comms)
 			comms.addListener(readMessages)
 		}, function(e) {
 			alert(e)
@@ -95,28 +95,9 @@ addEventListener('load', function() {
 		})
 	}
 
-	function setupHiddenEvent(){
-		var visibility = new Visibility()
-		function handleVisibilityChange(){
-			var hiding = document[visibility.hidden]
-			if (hiding){
-				timeoutId = window.setTimeout(function(){
-					sendMessage({
-						event: 'friend-updated',
-						stale: true,
-						hiding: true
-					})
-				}, timeout)
-			}
-			else
-				window.clearTimeout(timeoutId)
-			sendMessage({
-				event: 'friend-updated',
-				hiding: hiding
-			})
-		}
-		document.addEventListener(visibility.visibilityChange,
-			 												handleVisibilityChange, false)
+	function setupHiddenEvent(comms){
+		var visibility = new Visibility(comms)
+
 	}
 	function sendMessage(message){
 		if (!message) return

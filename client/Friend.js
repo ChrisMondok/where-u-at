@@ -68,9 +68,4 @@ Friend.prototype.update = function(info) {
 		if(info.position.coords.accuracy)
 			this.accuracyCircle.setRadius(info.position.coords.accuracy)
 	}
-	this.updateMarker(info.stale)
-}
-Friend.prototype.updateMarker = function(stale) {
-	var icon = stale ? 'http://maps.google.com/mapfiles/ms/icons/green.png' : ''
-	this.marker.setIcon(icon)
 }
