@@ -70,6 +70,7 @@ addEventListener('load', function() {
 
 		var menuButton = document.createElement('button')
 		menuButton.id = 'toggle-sidebar'
+		menuButton.innerHTML = '&vellip;'
 		map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(menuButton)
 
 		menuButton.addEventListener('click', toggleSidebar)
@@ -88,7 +89,6 @@ addEventListener('load', function() {
 			}, 250)
 		}
 	}
-
 
 	function createWidgets(connection, map, position) {
 		friendsList = new FriendsList(map, document.querySelector('aside.sidebar'))
