@@ -34,10 +34,16 @@ Friend.prototype.initMarkers = function() {
 }
 
 Friend.prototype.clicked = function() {
-		this.infoWindow.open(this.map, this.marker)
-		this.accuracyCircle.setVisible(true)
+		var visible = this.accuracyCircle.visible
+		this.toggleInfoWindow(visible)
+		this.accuracyCircle.setVisible(!visible)
 }
-
+Friend.prototype.toggleInfoWindow = function(visible) {
+	if(visible)
+		this.infoWindow.close(this.map, this.marker)
+	else
+		this.infoWindow.open(this.map, this.marker)
+}
 Friend.prototype.destroy = function() {
 	this.marker.setMap(null)
 	this.infoWindow.setMap(null)
@@ -71,5 +77,4 @@ Friend.prototype.update = function(info) {
 
 	if('hiding' in info)
 		this.marker.setOpacity(info.hiding ? 0.75 : 1)
-
 }
