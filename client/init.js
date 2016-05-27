@@ -29,7 +29,7 @@ addEventListener('load', function() {
 			})
 		}).then(function() {
 			startWatchingPosition()
-			setupHiddenEvent(comms)
+			new Visibility(comms)
 			comms.addListener(readMessages)
 		}, function(e) {
 			alert(e)
@@ -93,10 +93,6 @@ addEventListener('load', function() {
 		})
 	}
 
-	function setupHiddenEvent(comms){
-		var visibility = new Visibility(comms)
-
-	}
 	function sendMessage(message){
 		try {
 			comms.send(message)
