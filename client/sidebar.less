@@ -10,6 +10,8 @@ aside.sidebar {
 
 	width: 0;
 
+	z-index: 1;
+
 	overflow-y: scroll;
 	overflow-x: hidden;
 
@@ -40,6 +42,7 @@ aside.sidebar {
 
 aside.sidebar.expanded {
 	width: @expanded-sidebar-width;
+	box-shadow: 0px 0px 8px black;
 }
 
 button#toggle-sidebar {
