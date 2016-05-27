@@ -38,15 +38,18 @@ Friend.prototype.clicked = function() {
 		this.toggleInfoWindow(visible)
 		this.accuracyCircle.setVisible(!visible)
 }
+
 Friend.prototype.toggleInfoWindow = function(visible) {
 	if(visible)
 		this.infoWindow.close(this.map, this.marker)
 	else
 		this.infoWindow.open(this.map, this.marker)
 }
+
 Friend.prototype.destroy = function() {
 	this.marker.setMap(null)
 	this.infoWindow.setMap(null)
+	this.accuracyCircle.setMap(null)
 }
 
 Object.defineProperty(Friend.prototype, 'name', {
