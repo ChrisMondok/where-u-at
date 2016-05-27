@@ -4,6 +4,7 @@ addEventListener('load', function() {
 	var friendsList = null
 	var search = null
 	var destinationView = null
+
 	setUpForm()
 	function setUpForm() {
 		var form = document.querySelector('#setup-form-container form')
@@ -68,12 +69,6 @@ addEventListener('load', function() {
 		})
 
 
-		var menuButton = document.createElement('button')
-		menuButton.id = 'toggle-sidebar'
-		menuButton.innerHTML = '&vellip;'
-		map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(menuButton)
-
-		menuButton.addEventListener('click', toggleSidebar)
 
 		return new Promise(function(resolve, reject) {
 			google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
@@ -81,19 +76,21 @@ addEventListener('load', function() {
 				resolve(map)
 			})
 		})
-
-		function toggleSidebar() {
-			document.querySelector('aside.sidebar').classList.toggle('expanded') 
-			setTimeout(function() {
-				google.maps.event.trigger(map, 'resize')
-			}, 250)
-		}
 	}
 
 	function createWidgets(connection, map, position) {
-		friendsList = new FriendsList(map, document.querySelector('aside.sidebar'))
+		var sidebar = new Sidebar(document.querySelector('main'))
+
+		friendsList = new FriendsList(map, sidebar)
 		search = new Search(map, comms)
 		destinationView = new DestinationView(map, comms)
+
+		var menuButton = document.createElement('button')
+		menuButton.id = 'toggle-sidebar'
+		menuButton.innerHTML = '&vellip;'
+		map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(menuButton)
+
+		menuButton.addEventListener('click', sidebar.toggle.bind(sidebar))
 	}
 
 	function startWatchingPosition() {

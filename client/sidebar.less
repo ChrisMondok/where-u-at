@@ -1,3 +1,5 @@
+@expanded-sidebar-width: 300px;
+
 aside.sidebar {
 	display: flex;
 	flex-direction: column;
@@ -12,6 +14,7 @@ aside.sidebar {
 	overflow-x: hidden;
 
 	section {
+		width: @expanded-sidebar-width;
 		padding: 1em;
 
 		header {
@@ -28,11 +31,15 @@ aside.sidebar {
 		}
 	}
 
+	.the-void {
+		flex: 1 1 auto;
+	}
+
 	transition: width 0.25s ease-in-out;
 }
 
 aside.sidebar.expanded {
-	width: 300px;
+	width: @expanded-sidebar-width;
 }
 
 button#toggle-sidebar {

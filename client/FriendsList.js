@@ -1,7 +1,7 @@
-function FriendsList(map) {
+function FriendsList(map, sidebar) {
 	this.map = map
 	this.friends = []
-	this.list = document.querySelector('ul#friends-list')
+	this.initControls(sidebar)
 }
 
 FriendsList.prototype.update = function(message) {
@@ -69,4 +69,11 @@ FriendsList.prototype.handleFriendsListUpdated = function(message) {
 	message.friends.forEach(function(friend) {
 		this.handleUpdate(friend)
 	}, this)
+}
+
+FriendsList.prototype.initControls = function(sidebar) {
+	this.list = document.createElement('ul')
+	this.list.className = 'friends-list'
+
+	sidebar.addSection('Friends', this.list)
 }
