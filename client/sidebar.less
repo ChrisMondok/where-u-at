@@ -1,0 +1,50 @@
+aside.sidebar {
+	background-color: black;
+	color: white;
+
+	width: 0;
+
+	overflow-y: scroll;
+	overflow-x: hidden;
+
+	section {
+		padding: 1em;
+
+		header {
+			margin: -1em -1em 0em -1em;
+			padding: 1em 1em 1em 0.5em;
+		}
+
+		&:not(:last-of-type) {
+			border-bottom: 1px solid #999;
+		}
+
+		&:not(:first-of-type) {
+			border-top: 1px solid white;
+		}
+	}
+
+	transition: width 0.25s ease-in-out;
+}
+
+aside.sidebar.expanded {
+	width: 300px;
+}
+
+button#toggle-sidebar {
+	border: 2px solid transparent;
+	margin: 10px;
+	padding: 0;
+
+	border-radius: 50%;
+
+	box-shadow: 0px 1px 3px fadeout(black, 50%);
+
+	width: 32px;
+	height: 32px;
+
+	&:focus {
+		outline: none;
+		border-color: #55F;
+	}
+}

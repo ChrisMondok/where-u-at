@@ -1,8 +1,9 @@
-@import "style.less";
-@import "setup.less";
 @import "friends-list.less";
-@import "toast.less";
 @import "place-details.less";
+@import "setup.less";
+@import "sidebar.less";
+@import "style.less";
+@import "toast.less";
 
 .map-control-container {
 	margin: 10px;
@@ -16,26 +17,6 @@
 	}
 }
 
-button.icon-button {
-	background-color: transparent;
-	border: 2px solid transparent;
-	margin: -2px;
-	padding: 0;
-
-	&.circle {
-		border-radius: 50%;
-	}
-
-	img {
-		display: block;
-	}
-
-	&:focus {
-		outline: none;
-		border-color: #55F;
-	}
-}
-
 input[type=search] {
 	background-image: url(icons/Search-24.png);
 	background-repeat: no-repeat;
@@ -44,4 +25,18 @@ input[type=search] {
 	border: none;
 	padding: 1ch;
 	border-radius: 4px;
+}
+
+main {
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	flex-direction: row;
+
+	.map-container {
+		flex: 1 1 auto;
+	}
 }

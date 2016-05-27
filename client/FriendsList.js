@@ -1,7 +1,7 @@
 function FriendsList(map) {
 	this.map = map
 	this.friends = []
-	this.initControls()
+	this.list = document.querySelector('ul#friends-list')
 }
 
 FriendsList.prototype.update = function(message) {
@@ -69,22 +69,4 @@ FriendsList.prototype.handleFriendsListUpdated = function(message) {
 	message.friends.forEach(function(friend) {
 		this.handleUpdate(friend)
 	}, this)
-}
-
-FriendsList.prototype.initControls = function() {
-	this.list = document.createElement('ul')
-
-	container = document.createElement('div')
-	container.className = 'friends-list-container collapsed'
-
-	container.appendChild(this.list)
-
-	var toggleButton = makeImageButton('icons/User-Profile-32.png')
-
-	toggleButton.addEventListener('click', function() {
-		container.classList.toggle('collapsed')
-	});
-
-	container.appendChild(toggleButton)
-	this.map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(container)
 }

@@ -55,20 +55,24 @@ addEventListener('load', function() {
 
 	function makeMap(parent, position) {
 		var node = document.createElement('div')
-		parent.appendChild(node)
+		parent.insertBefore(node, parent.firstChild)
 
-		node.style.position = 'absolute'
-
-		;['left', 'right', 'top', 'bottom'].forEach(function(side) {
-			node.style[side] = '0'
-		}, this)
+		node.className = 'map-container'
 
 		var map = new google.maps.Map(node, {
 			zoom: 8,
 			fullscreenControl: false,
 			center: { lat: position.coords.latitude, lng: position.coords.longitude },
-			clickableIcons: false
+			clickableIcons: false,
+			disableDefaultUI: true
 		})
+
+
+		var menuButton = document.createElement('button')
+		menuButton.id = 'toggle-sidebar'
+		map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(menuButton)
+
+		menuButton.addEventListener('click', toggleSidebar)
 
 		return new Promise(function(resolve, reject) {
 			google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
@@ -76,10 +80,18 @@ addEventListener('load', function() {
 				resolve(map)
 			})
 		})
+
+		function toggleSidebar() {
+			document.querySelector('aside.sidebar').classList.toggle('expanded') 
+			setTimeout(function() {
+				google.maps.event.trigger(map, 'resize')
+			}, 250)
+		}
 	}
 
+
 	function createWidgets(connection, map, position) {
-		friendsList = new FriendsList(map)
+		friendsList = new FriendsList(map, document.querySelector('aside.sidebar'))
 		search = new Search(map, comms)
 		destinationView = new DestinationView(map, comms)
 	}
