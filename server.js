@@ -4,16 +4,13 @@ const url = require('url')
 const shortid = require('shortid')
 const Cliques = require('./Cliques')
 
-const fs = require('fs')
-
-
-const testing = process.argv.slice(2).indexOf('--testing') != -1
-const server = createServer(testing, serveClientFiles)
-
-server.listen(testing ? 8080 : 443)
+const isTesting = process.argv.slice(2).indexOf('--testing') != -1
+const server = createServer(isTesting, serveClientFiles)
 
 const clientFileServer = new StaticServer('./client')
 const nodeModuleServer = new StaticServer('./node_modules/')
+
+server.listen(isTesting ? 8080 : 443)
 
 function serveClientFiles(request, response) {
 	var path = url.parse(request.url, true).path
@@ -48,8 +45,8 @@ wss.on('connection', function(ws) {
 	}
 })
 
-function createServer(testing, callback) {
-	if(testing)
+function createServer(isTesting, callback) {
+	if(isTesting)
 		return require('http').createServer(callback)
 	else {
 		const LEX = require('letsencrypt-express')

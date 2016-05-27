@@ -44,7 +44,8 @@ Clique.prototype.add = function(ws) {
 
 	ws.on('message', (m) => this.onMessage(ws, m))
 	ws.on('close', (m) => { this.remove(ws) })
-	this.getFriendUpToSpeed(ws);
+
+	this.getFriendUpToSpeed(ws)
 
 	this.sendToOthers(ws, {
 		event: 'friend-joined',
