@@ -75,5 +75,14 @@ FriendsList.prototype.initControls = function(sidebar) {
 	this.list = document.createElement('ul')
 	this.list.className = 'friends-list'
 
-	sidebar.addSection('Friends', this.list)
+	var inviteLink = document.createElement('a')
+	inviteLink.textContent = 'Invite More'
+	inviteLink.href = 'sms:?&body='+encodeURI('Where u at? '+window.location.href)
+
+	var container = document.createElement('div')
+	container.appendChild(this.list)
+	container.appendChild(inviteLink)
+
+	sidebar.addSection('Friends', container)
 }
+
