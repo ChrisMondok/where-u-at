@@ -31,6 +31,11 @@ FriendsList.prototype.addFriend = function(friend) {
 
 	li.setAttribute('data-friend-id', friend.id)
 	li.textContent = friend.name
+
+	this.icon = document.createElement('span')
+	this.icon.className = 'icon'
+	li.insertBefore(this.icon, li.firstChild)
+
 	this.list.appendChild(li)
 	li.addEventListener('click', friend.clicked.bind(friend))
 }
@@ -45,6 +50,9 @@ FriendsList.prototype.handleUpdate = function(message) {
 	var friend = this.friends.find({id: message.id})
 	if(friend) friend.update(message)
 	else this.addFriend(new Friend(this.map, message))
+	
+	if(message.color)
+		this.icon.style.backgroundColor = message.color
 }
 
 FriendsList.prototype.handleFriendLeft = function(message) {

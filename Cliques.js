@@ -1,6 +1,7 @@
 const cliques = {}
 const shortid = require('shortid')
 const url = require('url')
+const onecolor = require('onecolor')
 
 function Clique(name) {
 	this.name = name
@@ -36,6 +37,7 @@ Clique.prototype.add = function(ws) {
 		}
 	}
 	ws.hiding = false
+	ws.color = pickAColor()
 	console.log(`${ws.name} (${ws.id}) joined ${this.name}`)
 
 	this.friends.push(ws)
@@ -49,7 +51,8 @@ Clique.prototype.add = function(ws) {
 		name: ws.name,
 		id: ws.id,
 		position: ws.position,
-		hiding: ws.hiding
+		hiding: ws.hiding,
+		color: ws.color
 	})
 }
 
@@ -127,6 +130,7 @@ Clique.prototype.getFriendUpToSpeed = function(friend) {
 				position: f.position,
 				name: f.name,
 				hiding: f.hiding,
+				color: f.color
 			}
 		})
 	})
@@ -137,6 +141,9 @@ Clique.prototype.getFriendUpToSpeed = function(friend) {
 	})
 }
 
+function pickAColor() {
+	return new onecolor.HSL(Math.random(), 1, 0.5).hex()
+}
 
 module.exports.get = function getClique(name) {
 	if(!(name in cliques))

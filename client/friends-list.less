@@ -12,17 +12,27 @@
 		padding: 0;
 		margin: 0;
 
-		li {
-			padding: 1em;
-			font-size: 1rem;
-		}
-
 		overflow-x: hidden;
 		overflow-y: auto;
 		width: 300px;
 		max-height: 300px;
 
 		transition: width 0.25s ease-in-out, max-height 0.25s ease-in-out;
+
+		li {
+			padding: 1em;
+			font-size: 1rem;
+
+			span.icon {
+				border: 2px solid black;
+				width: 12px;
+				height: 12px;
+				border-radius: 50%;
+				display: inline-block;
+				vertical-align: middle;
+				margin-right: 1ch;
+			}
+		}
 	}
 
 	&.collapsed ul {

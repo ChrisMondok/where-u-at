@@ -12,6 +12,7 @@
     "less": "^2.7.1",
     "letsencrypt-express": "^1.1.5",
     "node-static": "^0.7.7",
+    "onecolor": "^3.0.3",
     "shortid": "^2.2.6",
     "spdy": "^3.3.2",
     "ws": "^1.1.0"

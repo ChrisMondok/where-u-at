@@ -1,6 +1,8 @@
 function Friend(map, info) {
 	this.id = info.id
 	this.map = map
+	this.hiding = false
+	this.color = 'white'
 
 	this.initMarkers()
 
@@ -11,8 +13,12 @@ function Friend(map, info) {
 }
 
 Friend.prototype.initMarkers = function() {
+	this.foregroundPin = makePin('white', 1.0)
+	this.backgroundPin = makePin('white', 0.5)
+
 	this.marker = new google.maps.Marker({
-		map: this.map
+		map: this.map,
+		icon: this.foregroundPin
 	})
 
 	this.marker.addListener('click',this.clicked.bind(this))
@@ -59,7 +65,6 @@ Object.defineProperty(Friend.prototype, 'name', {
 	set: function(name) {
 		this._name = name
 		this.marker.setTitle(name)
-		this.marker.setLabel(name)
 		this.infoWindow.setContent(name)
 		return this._name
 	}
@@ -78,6 +83,16 @@ Friend.prototype.update = function(info) {
 			this.accuracyCircle.setRadius(info.position.coords.accuracy)
 	}
 
+	if(info.color) {
+		if(this.color != info.color) {
+			this.color = info.color
+			this.foregroundPin = makePin(this.color, 1.0)
+			this.backgroundPin = makePin(this.color, 0.7)
+		}
+	}
+
 	if('hiding' in info)
-		this.marker.setOpacity(info.hiding ? 0.75 : 1)
+		this.hiding = info.hiding
+
+	this.marker.setIcon(this.hiding ? this.backgroundPin : this.foregroundPin)
 }
