@@ -122,13 +122,11 @@ Clique.prototype.getFriendUpToSpeed = function(friend) {
 	this.sendTo(friend, {
 		event: 'friends-list-updated',
 		friends: this.friends.map(f => {
-			console.log(f)
 			return {
 				id: f.id,
 				position: f.position,
 				name: f.name,
 				hiding: f.hiding,
-				stale: f.stale
 			}
 		})
 	})

@@ -4,8 +4,6 @@ addEventListener('load', function() {
 	var friendsList = null
 	var search = null
 	var destinationView = null
-	var timeoutId = null
-	var timeout = 1000 //1s
 	setUpForm()
 	function setUpForm() {
 		var form = document.querySelector('#setup-form-container form')
@@ -100,7 +98,6 @@ addEventListener('load', function() {
 
 	}
 	function sendMessage(message){
-		if (!message) return
 		try {
 			comms.send(message)
 		}
@@ -108,6 +105,7 @@ addEventListener('load', function() {
 			console.log(e)
 		}
 	}
+
 	function readMessages() {
 		while(comms.peek()) {
 			var message = comms.read()
