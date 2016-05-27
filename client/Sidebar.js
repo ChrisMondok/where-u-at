@@ -1,5 +1,7 @@
-function Sidebar(container) {
+function Sidebar(container, map) {
+	this.map = map
 	this.initControls(container)
+	this._expanded = false
 }
 
 Sidebar.prototype.initControls = function(container) {
@@ -9,7 +11,9 @@ Sidebar.prototype.initControls = function(container) {
 
 	var theVoid = document.createElement('div')
 	theVoid.className = 'the-void'
-	theVoid.addEventListener('click', this.close.bind(this))
+	theVoid.addEventListener('click', function() {
+		this.expanded = false
+	}.bind(this))
 
 	this.node.appendChild(theVoid)
 }
@@ -24,10 +28,18 @@ Sidebar.prototype.addSection = function(title, node) {
 	this.node.appendChild(section)
 }
 
-Sidebar.prototype.toggle = function() {
-	this.node.classList.toggle('expanded') 
-}
+Object.defineProperty(Sidebar.prototype, 'expanded', {
+	get: function() {
+		return this._expanded
+	}, set: function(v) {
+		this._expanded = v
+		this.node.classList[v ? 'add' : 'remove']('expanded')
+		setTimeout(function() {
+			google.maps.event.trigger(this.map, 'resize')
+		}.bind(this), 250)
+	}
+})
 
-Sidebar.prototype.close = function() {
-	this.node.classList.remove('expanded')
+Sidebar.prototype.toggle = function() {
+	this.expanded = !this.expanded
 }

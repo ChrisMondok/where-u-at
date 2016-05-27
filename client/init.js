@@ -79,7 +79,7 @@ addEventListener('load', function() {
 	}
 
 	function createWidgets(connection, map, position) {
-		var sidebar = new Sidebar(document.querySelector('main'))
+		var sidebar = new Sidebar(document.querySelector('main'), map)
 
 		friendsList = new FriendsList(map, sidebar)
 		search = new Search(map, comms)
