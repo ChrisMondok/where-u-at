@@ -68,4 +68,8 @@ Friend.prototype.update = function(info) {
 		if(info.position.coords.accuracy)
 			this.accuracyCircle.setRadius(info.position.coords.accuracy)
 	}
+
+	if('hiding' in info)
+		this.marker.setOpacity(info.hiding ? 0.75 : 1)
+
 }
