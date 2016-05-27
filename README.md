@@ -1,4 +1,4 @@
-# Get Together
+# Where U At
 
 A simple no frills way of finding friends in the local area. No registration,
 no tracking, just create a clique and share with your friends in the area.
